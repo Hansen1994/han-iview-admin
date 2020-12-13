@@ -428,6 +428,9 @@ export const sortObj = (arr, property) => {
   return arr.sort((m, n) => m[property] - n[property])
 }
 
+/**
+ * 自己写的
+ */
 // 获取节点的父级节点(一级节点)
 /**
  * arr: 整个菜单
@@ -473,4 +476,69 @@ export const getNode = (arr, node) => {
       }
     }
   }
+}
+
+// 选中角色更改菜单选项
+/**
+ *
+ * @param {*} tree 菜单权限树
+ * @param {*} nodes 菜单树某个节点拥有的权限
+ * @param {*} property 被选中
+ * @param {*} flag boolean
+ */
+export const modifyNode = (tree, nodes, property, flag) => {
+  for (let i = 0; i < tree.length; i++) {
+    // 遍历整个角色菜单树
+    const currentNode = tree[i]
+
+    if (nodes && nodes.length > 0) {
+      // 传递了需要设置的节点(权限)
+      if (nodes.includes(currentNode._id)) {
+        const tmp = { ...currentNode }
+        tmp[property] = flag
+        // boolean的转换
+        tree.splice(i, 1, tmp)
+      }
+    } else {
+      // 无节点，无需要特别设置的节点权限，统一去设置整个树形菜单
+      const tmp = { ...currentNode }
+      tmp[property] = flag
+      tree.splice(i, 1, tmp)
+    }
+    if (currentNode.children && currentNode.children.length > 0) {
+      modifyNode(currentNode.children, nodes, property, flag)
+    }
+    if (currentNode.operations && currentNode.operations.length > 0) {
+      // '_' + property为表格特有
+      modifyNode(currentNode.operations, nodes, '_' + property, flag)
+    }
+  }
+  return tree
+}
+
+// 扁平化数组
+export const flatten = (arr) => {
+  // 利用循环，很重要
+  while (arr.some((item) => Array.isArray(item))) {
+    arr = [].concat(...arr)
+  }
+  return arr
+}
+
+// 获取属性id
+export const getPropertyIds = (menu, properties) => {
+  const arr = []
+  // 遍历整个树形菜单数据
+  menu.forEach((item) => {
+    if (item.checked || item._checked) {
+      arr.push(item._id)
+    }
+    // 查询两个属性下面的节点信息，children->children->operations
+    properties.forEach((property) => {
+      if (item[property] && item[property].length > 0) {
+        arr.push(getPropertyIds(item[property], properties))
+      }
+    })
+  })
+  return flatten(arr)
 }
