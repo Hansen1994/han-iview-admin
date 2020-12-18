@@ -525,11 +525,12 @@ export const flatten = (arr) => {
   return arr
 }
 
-// 获取属性id
+// 获取所有属性id(菜单和表格的)
 export const getPropertyIds = (menu, properties) => {
   const arr = []
   // 遍历整个树形菜单数据
   menu.forEach((item) => {
+    // checked为复选框是否被选中，_checked为表格复选框是否被选中
     if (item.checked || item._checked) {
       arr.push(item._id)
     }

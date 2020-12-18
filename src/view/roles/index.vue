@@ -4,7 +4,7 @@
       <i-col span="5" :sm="24" :md="24" :lg="5">
         <Card :dis-hover="true" :shadow="true">
           <p slot="title"><Icon type="md-contacts"></Icon>角色列表</p>
-          <a slot="extra" @click.prevent="addRole()" v-if="!isEdit"> <Icon type="md-add"></Icon>新增 </a>
+          <a slot="extra" @click.prevent="addRoleModel()" v-if="!isEdit"> <Icon type="md-add"></Icon>新增 </a>
           <ul class="imooc-card">
             <li
               v-for="(item, index) in roles"
@@ -18,7 +18,7 @@
                 <!-- .stop阻止点击事件继续传播,防止触发selectRole造成未选中状态 -->
                 <Icon type="ios-create" size="16" @click.stop="editLabel(item, index)"></Icon>
                 <Icon type="md-build" size="16" color="#2d8cf0" @click.stop="editRole(item, index)"></Icon>
-                <Icon type="md-trash" size="16" color="#ed4014" @click.stop="deleteRole(item, index)"></Icon>
+                <Icon type="md-trash" size="16" color="#ed4014" @click.stop="_deleteRole(item, index)"></Icon>
               </span>
             </li>
           </ul>
@@ -69,7 +69,7 @@
 </template>
 
 <script>
-import { getMenu } from '@/api/admin'
+import { getMenu, getRoles, addRole, updateRole, deleteRole } from '@/api/admin'
 import OperationsTable from './operations.vue'
 import { modifyNode, getPropertyIds } from '@/libs/util'
 
@@ -86,16 +86,16 @@ export default {
       loading: false,
       formItem: {
         name: '',
-        role: '',
         desc: ''
       },
-      roles: [
-        {
-          name: '超级管理员',
-          role: 'super_admin',
-          menu: ['5fd027a943e1fd3954ecc94f', '5fcdee3edb5b9206580ad537']
-        }
-      ],
+      roles: [],
+      // roles: [
+      //   {
+      //     name: '超级管理员',
+      //     role: 'super_admin',
+      //     menu: ['5fd027a943e1fd3954ecc94f', '5fcdee3edb5b9206580ad537']
+      //   }
+      // ],
       formRules: {
         name: [
           {
@@ -188,6 +188,7 @@ export default {
   mounted() {
     window.vue = this
     this._getMenu()
+    this._getRoles()
   },
   methods: {
     initForm() {
@@ -198,6 +199,14 @@ export default {
         this.$refs.form.resetFields()
       }, 0)
     },
+    // 获取角色
+    _getRoles() {
+      getRoles().then((res) => {
+        if (res.code === 200) {
+          this.roles = res.data
+        }
+      })
+    },
     // 获取菜单
     _getMenu() {
       getMenu().then((res) => {
@@ -205,19 +214,23 @@ export default {
         localStorage.setItem('menuData', JSON.stringify(this.menuData))
       })
     },
-    selectRole(index) {
+    // 选中角色
+    selectRole(value) {
       // 一开始未选中状态
-      if (this.roleIndex === '' || this.roleIndex !== index) {
+      if (this.roleIndex === '' || this.roleIndex !== value) {
         // 选中后
-        this.roleIndex = index
-        // 修改右侧菜单树+权限列表的选中状态
+        this.roleIndex = value
+        // 如果当前角色菜单为空
+        if (this.roles[this.roleIndex].menu.length === 0) {
+          return
+        }
+        // 修改右侧菜单树+权限列表的选中状态(他就是个显示，不能编辑的)
         const tmpData = modifyNode(this.menuData, this.roles[this.roleIndex].menu, 'checked', true)
-        console.log(tmpData)
         // 通过缓存数据形式达到锁住功能(就是不能点选复选框)
         localStorage.setItem('menuData', JSON.stringify(tmpData))
-        if (this.selectNode.length > 0 && this.selectNode[0].operations) {
-          this.tableData = this.selectNode[0].operations
-        }
+        // if (this.selectNode.length > 0 && this.selectNode[0].operations) {
+        //   this.tableData = this.selectNode[0].operations
+        // }
       } else {
         // 未选中
         modifyNode(this.menuData, null, 'checked', false)
@@ -225,13 +238,16 @@ export default {
         this.roleIndex = ''
       }
     },
-    addRole() {
+    // 添加角色跳出模态框
+    addRoleModel() {
       this.showAdd = true
     },
+    // 编辑角色跳出模态框
     editRole(item, index) {
       this.isEdit = true
       this.roleIndex = index
     },
+    // 角色编辑
     editLabel(item, index) {
       this.showAdd = true
       this.modelEdit = true
@@ -239,25 +255,41 @@ export default {
       // 必需浅拷贝，不然两边数据会有引用关系造成同步变化
       this.formItem = { ...item }
     },
-    deleteRole(item, index) {
+    // 删除角色
+    _deleteRole(item, index) {
       this.$Modal.confirm({
         title: '确定删除吗？',
         content: `确定删除${item.name}的角色吗？`,
         onOk: () => {
           this.roles.splice(index, 1)
-          this.$Message.success('成功删除！')
-          //  this._getList()
+          // this.$Message.success('成功删除！')
+          // this._getList()
+          deleteRole({ _id: item._id }).then((res) => {
+            if (res.code === 200 && res.data.deletedCount === 1) {
+              this.$Message.success('成功删除！')
+            }
+          })
         },
         onCancel: () => {
           this.$Message.info('取消操作！')
         }
       })
     },
+    // 编辑视图(中间那两个小按钮)
     submit() {
       this.isEdit = false
       localStorage.setItem('menuData', JSON.stringify(this.menuData))
       const menus = getPropertyIds(this.menuData, ['children', 'operations'])
-      console.log(menus)
+      // 更新角色，以及他所对应的权限
+      const tmp = { ...this.roles[this.roleIndex] }
+      // 再来赋值一次
+      tmp.menu = menus
+      this.roles.splice(this.roleIndex, 1, tmp)
+      updateRole(tmp).then((res) => {
+        if (res.code === 200 && res.data.nModified === 1) {
+          this.$Message.success('更新角色权限成功！')
+        }
+      })
     },
     cancel() {
       this.isEdit = false
@@ -274,20 +306,33 @@ export default {
       this.$refs.form.validate((valid) => {
         if (valid) {
           // 检验通过后的逻辑
+          // 1.这儿是表单的信息
           if (this.modelEdit) {
             // 为角色模态框重新编辑态
             this.roles.splice(this.labelIndex, 1, { ...this.formItem })
           } else {
+            // 如果不是编辑
             this.roles.push({ ...this.formItem })
           }
-          // 保证赋值完成后清除
+          // 2.发送创建角色的请求
+          addRole(this.formItem).then((res) => {
+            if (res.code === 200 && res.data.name !== '') {
+              this.$Message.success('添加成功啦！')
+            }
+          })
+          // 3.保证赋值完成后清除
           this.initForm()
+        } else {
+          this.loading = false
+          this.$nextTick(() => (this.loading = true))
+          this.$Message.error('哎呀，失败了，请检验表单数据！')
         }
       })
     },
     modelCancel() {
       this.initForm()
     },
+    // 节点赋值
     handleTreeChange(item) {
       if (item.length === 0) {
         return
@@ -308,10 +353,7 @@ export default {
     },
     // 点击表格时候获取当前表格数据
     handleTableChange(table) {
-      this.tableData = table
       const ids = table.map((o) => o._id)
-      console.log(this.selectNode)
-      console.log(ids)
       if (this.selectNode.length > 0 && this.selectNode[0].operations) {
         this.selectNode[0].operations.forEach((item) => {
           if (!ids.includes(item._id)) {
