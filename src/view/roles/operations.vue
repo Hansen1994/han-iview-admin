@@ -72,7 +72,7 @@ export default {
       if (!this.isEdit) {
         // 加定时器是为了更新在视图之后
         setTimeout(() => {
-          // 像这种互锁功能是一个个来的(树归树，表归表)
+          // 像这种互锁功能是一个个来的(树归树，表归表)，在未编辑状态，我们通过localStorage存储方式不让复选框点选
           const tmpData = localStorage.getItem('localData')
           if (typeof tmpData !== 'undefined') {
             this.localData = JSON.parse(tmpData)

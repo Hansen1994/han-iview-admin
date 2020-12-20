@@ -85,7 +85,7 @@ export default {
             const data = res.data.data
             console.log(res.data.token)
             commit('setToken', res.data.token)
-            commit('setAvatar', data.pic)
+            // commit('setAvatar', data.pic)
             commit('setUserName', data.name)
             commit('setUserId', data._id)
             commit('setAccess', data.roles)
@@ -95,6 +95,14 @@ export default {
           .catch((err) => {
             reject(err)
           })
+      })
+    },
+    // 退出登录
+    handleLogOut({ state, commit }) {
+      return new Promise((resolve, reject) => {
+        commit('setToken', '')
+        commit('setAccess', [])
+        resolve()
       })
     },
     // 获取用户相关信息

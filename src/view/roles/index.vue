@@ -74,6 +74,8 @@ import OperationsTable from './operations.vue'
 import { modifyNode, getPropertyIds } from '@/libs/util'
 
 export default {
+  // 在iview中，name与路由中的name相同(notCache为false情况下)会形成缓存
+  name: 'roles_management',
   data() {
     return {
       // 是否为编辑状态
@@ -179,7 +181,9 @@ export default {
       ],
       roleIndex: '',
       // 表格数据
-      tableData: []
+      tableData: [],
+      // 选择的节点
+      selectNode: []
     }
   },
   components: {
@@ -222,15 +226,18 @@ export default {
         this.roleIndex = value
         // 如果当前角色菜单为空
         if (this.roles[this.roleIndex].menu.length === 0) {
+          modifyNode(this.menuData, null, 'checked', false)
+          this.tableData = []
+          this.roleIndex = ''
           return
         }
         // 修改右侧菜单树+权限列表的选中状态(他就是个显示，不能编辑的)
         const tmpData = modifyNode(this.menuData, this.roles[this.roleIndex].menu, 'checked', true)
         // 通过缓存数据形式达到锁住功能(就是不能点选复选框)
         localStorage.setItem('menuData', JSON.stringify(tmpData))
-        // if (this.selectNode.length > 0 && this.selectNode[0].operations) {
-        //   this.tableData = this.selectNode[0].operations
-        // }
+        if (this.selectNode.length > 0 && this.selectNode[0].operations) {
+          this.tableData = this.selectNode[0].operations
+        }
       } else {
         // 未选中
         modifyNode(this.menuData, null, 'checked', false)
@@ -308,18 +315,29 @@ export default {
           // 检验通过后的逻辑
           // 1.这儿是表单的信息
           if (this.modelEdit) {
+            const roleData = {
+              _id: this.roles[this.editIndex]._id,
+              ...this.formItem
+            }
             // 为角色模态框重新编辑态
-            this.roles.splice(this.labelIndex, 1, { ...this.formItem })
+            // this.roles.splice(this.labelIndex, 1, { ...this.formItem })
+            updateRole(roleData).then((res) => {
+              if (res.code === 200 && res.data.nModified === 1) {
+                this.roles.splice(this.labelIndex, 1, { ...this.formItem })
+              }
+            })
           } else {
             // 如果不是编辑
-            this.roles.push({ ...this.formItem })
+            // this.roles.push({ ...this.formItem })
+            // 2.发送创建角色的请求
+            addRole(this.formItem).then((res) => {
+              if (res.code === 200 && res.data.name !== '') {
+                this.roles.push({ ...this.formItem })
+                this.$Message.success('添加成功啦！')
+              }
+            })
           }
-          // 2.发送创建角色的请求
-          addRole(this.formItem).then((res) => {
-            if (res.code === 200 && res.data.name !== '') {
-              this.$Message.success('添加成功啦！')
-            }
-          })
+
           // 3.保证赋值完成后清除
           this.initForm()
         } else {
@@ -344,6 +362,7 @@ export default {
     // 菜单权限点选
     handleTreeChecked(item) {
       if (!this.isEdit) {
+        // 在未编辑状态，我们通过localStorage存储方式不让复选框点选
         const tmpData = localStorage.getItem('menuData')
         if (typeof tmpData !== 'undefined') {
           this.menuData = JSON.parse(tmpData)

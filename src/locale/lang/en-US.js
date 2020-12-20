@@ -53,5 +53,7 @@ export default {
   menu: 'Menu Setting',
   roles: 'Roles',
   'Menu Options': 'Menu Options',
-  resources: 'Resources'
+  resources: 'Resources',
+  'iview-admin': 'iview-admin',
+  'api-doc': 'api-doc'
 }

@@ -6,7 +6,7 @@
           :size="size"
           :isEdit="isEdit"
           :menuData="menuData"
-          @addMenu="addMenu"
+          @addMenu="_addMenu"
           @editMenu="editMenu"
           @deleteMenu="deleteMenu"
           @handleTreeChange="handleTreeChange"
@@ -46,7 +46,21 @@ export default {
     return {
       isEdit: false,
       // 表单数据
-      formData: {},
+      formData: {
+        title: '',
+        name: '', // 组件名称
+        path: '',
+        component: '',
+        hideInBread: false,
+        hideInMenu: false,
+        notCache: false,
+        icon: '',
+        sort: 0,
+        redirect: '',
+        type: 'menu',
+        link: '',
+        operations: []
+      },
       // 屏幕的变化
       screenWidth: 0,
       // 是否选择了节点
@@ -167,7 +181,8 @@ export default {
     initFields() {
       // 表单清空
       this.formData = {
-        name: '',
+        title: '',
+        name: '', // 组件名称
         path: '',
         component: '',
         hideInBread: false,
@@ -177,6 +192,7 @@ export default {
         sort: 0,
         redirect: '',
         type: 'menu',
+        link: '',
         operations: []
       }
       // 不可编辑
@@ -187,7 +203,7 @@ export default {
       this.tableData = []
     },
     // 增加菜单
-    addMenu(type) {
+    _addMenu(type) {
       this.initFields()
       this.type = type
       // console.log(this.selectNode)
@@ -266,10 +282,11 @@ export default {
       if (this.type === 'bro') {
         // 兄弟节点
         if (this.menuData.length === 0) {
-          this.menuData.push(data)
           addMenu(data).then((res) => {
             if (res.code === 200) {
+              this.menuData.push(data)
               this.$Message.success('添加首个一级菜单成功')
+              this.initFields()
             }
           })
         } else {
@@ -301,6 +318,29 @@ export default {
           if (parent.nodeKey === selectNode.nodeKey) {
             addMenu(data).then((res) => {
               if (res.code === 200) {
+                // bug修复??
+                // 二级节点添加新的兄弟节点
+                // const getMenu = (parent, select) => {
+                //   for (let i = 0; i < parent.length; i++) {
+                //     const item = parent[i]
+                //     // 去重
+                //     // 原有数据等于选中数据，也就是说按照顺序加入兄弟节点
+                //     if (item.name === select.name) {
+                //       // 排序
+                //       parent.push(res.data)
+                //       // 对sort属性进行排序
+                //       parent = sortObj(parent, 'sort')
+                //       return parent
+                //     } else {
+                //       // 判断有无孩子节点(在孩子节点上设置兄弟节点)
+                //       if (item.children && item.children.length > 0) {
+                //         getMenu(item.children, select)
+                //       }
+                //     }
+                //   }
+                //   return parent
+                // }
+
                 this.$Message.success('添加菜单成功')
               }
             })
@@ -370,6 +410,8 @@ export default {
           if (res.code === 200) {
             this.$Message.success('更新菜单成功！')
           }
+          // 为了排序
+          this._getMenu()
         })
       }
       // console.log(data)

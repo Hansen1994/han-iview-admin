@@ -45,16 +45,19 @@
     <EditModel
       :isShow="showEdit"
       :item="currentItem"
+      :roles="roles"
       @editEvent="handleItemEdit"
       @changeEvent="handleEditChangeEvent"
     ></EditModel>
     <AddModel
       :isShow="showAdd"
+      :roles="roles"
       @editEvent="handleItemAdd"
       @changeEvent="handleAddChangeEvent"
     ></AddModel>
     <BatchSetModel
       :isShow="showSet"
+      :roles="roles"
       @editEvent="handleItemSet"
       @changeEvent="handleSetChangeEvent"
     ></BatchSetModel>
@@ -63,20 +66,14 @@
 
 <script>
 // 获取用户列表，通过id更新用户，更具id删除用户
-import {
-  getUserList,
-  updateUserById,
-  deleteUserById,
-  addUser,
-  updateUserBatchById
-} from '@/api/admin'
+import { getUserList, getRoleNames, updateUserById, deleteUserById, addUser, updateUserBatchById } from '@/api/admin'
 import Tables from '_c/tables'
 import EditModel from './edit'
 import AddModel from './add'
 import BatchSetModel from './batchSet'
 import dayjs from 'dayjs'
 export default {
-  name: 'user_management',
+  name: 'menu_management', // 等价于notCache = false，但是route中name要相同
   components: {
     Tables,
     AddModel,
@@ -93,6 +90,7 @@ export default {
       showSet: false,
       currentIndex: 0,
       currentItem: {},
+      roles: [], // 角色的值
       // 需要搜索的值
       option: {},
       columns: [
@@ -125,7 +123,9 @@ export default {
           minWidth: 160,
           // params就是后台传递来的数据
           render: (h, params) => {
-            return h('div', [h('span', params.row.roles.join(','))])
+            // return h('div', [h('span', params.row.roles.join(','))])
+            const roleNames = params.row.roles.map((o) => this.roleNames[o]).join(',')
+            return h('div', [h('span', roleNames)])
           },
           search: {
             type: 'select',
@@ -158,9 +158,7 @@ export default {
           align: 'center',
           minWidth: 100,
           render: (h, params) => {
-            return h('div', [
-              h('span', params.row.status === '0' ? '否' : '是')
-            ])
+            return h('div', [h('span', params.row.status === '0' ? '否' : '是')])
           },
           search: {
             type: 'radio',
@@ -212,9 +210,7 @@ export default {
           align: 'center',
           minWidth: 180,
           render: (h, params) => {
-            return h('div', [
-              h('span', dayjs(params.row.created).format('YYYY-MM-DD hh:mm:ss'))
-            ])
+            return h('div', [h('span', dayjs(params.row.created).format('YYYY-MM-DD hh:mm:ss'))])
           },
           search: {
             type: 'date'
@@ -236,8 +232,19 @@ export default {
       selection: []
     }
   },
+  computed: {
+    roleNames() {
+      const tmp = {}
+      this.roles.forEach((item) => {
+        // 形成一个以key为admin(英文)，value为管理员(中文)的对象
+        tmp[item.role] = item.name
+      })
+      return tmp
+    }
+  },
   mounted() {
     this._getList()
+    this._getRoleNames()
   },
   methods: {
     // 批量进行删除
@@ -363,11 +370,7 @@ export default {
     // 需要搜索的值
     handleSearch(value) {
       // 判断是否有新的查询内容的传递，把分页数据归0
-      if (
-        typeof this.option.search !== 'undefined' &&
-        value.search !== this.option.search &&
-        this.option === {}
-      ) {
+      if (typeof this.option.search !== 'undefined' && value.search !== this.option.search && this.option === {}) {
         // 从第1页开始，就是搜索选项发生跳转的时候
         this.page = 1
         // 搜索的选项和值
@@ -397,6 +400,7 @@ export default {
       this.selection = selection
       console.log(this.selection)
     },
+    // 获取列表
     _getList() {
       getUserList({
         page: this.page - 1,
@@ -405,6 +409,13 @@ export default {
       }).then((res) => {
         this.total = res.total
         this.tableData = res.data
+      })
+    },
+    // 获取角色名称
+    _getRoleNames() {
+      getRoleNames().then((res) => {
+        console.log(res.data)
+        this.roles = res.data
       })
     }
   }

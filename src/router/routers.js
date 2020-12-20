@@ -54,10 +54,29 @@ export default [
     path: '',
     name: 'doc',
     meta: {
-      title: '文档',
-      href: 'https://lison16.github.io/iview-admin-doc/#/',
-      icon: 'ios-book'
-    }
+      title: '项目文档',
+      icon: 'ios-folder'
+    },
+    children: [
+      {
+        path: '/iview',
+        name: 'iview-admin',
+        meta: {
+          title: 'iview-admin文档',
+          href: 'https://lison16.github.io/iview-admin-doc/#/',
+          icon: 'ios-book'
+        }
+      },
+      {
+        path: '/api',
+        name: 'api-doc',
+        meta: {
+          title: '接口文档',
+          href: 'https://www.showdoc.com.cn/1003389463881666?page_id=5214573241635264',
+          icon: 'ios-cube'
+        }
+      }
+    ]
   },
   {
     path: '/join',

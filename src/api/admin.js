@@ -42,6 +42,9 @@ const addRole = (data) => axios.post('/admin/add-role', data)
 // 获取角色权限
 const getRoles = () => axios.get('/admin/get-roles')
 
+// 获取角色名称
+const getRoleNames = () => axios.get('/admin/get-roles-names')
+
 // 更新角色权限
 const updateRole = (data) => axios.post('/admin/update-role', data)
 
@@ -60,6 +63,7 @@ export {
   deleteMenu,
   addRole,
   getRoles,
+  getRoleNames,
   updateRole,
   deleteRole
 }

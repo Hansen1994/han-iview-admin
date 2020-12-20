@@ -51,6 +51,9 @@ export default {
   roles_management: '角色权限',
   menu: '系统菜单配置',
   roles: '权限管理',
+  user: '用户相关配置',
   'Menu Options': '菜单选项',
-  resources: '资源选项'
+  resources: '资源选项',
+  'iview-admin': 'iview-admin文档',
+  'api-doc': '接口文档'
 }

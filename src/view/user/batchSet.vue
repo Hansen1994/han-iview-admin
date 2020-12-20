@@ -1,20 +1,10 @@
 <template>
   <div>
-    <Modal
-      v-model="showStatus"
-      title="批量设置"
-      @on-ok="ok"
-      @on-cancel="cancel"
-    >
+    <Modal v-model="showStatus" title="批量设置" @on-ok="ok" @on-cancel="cancel">
       <Form :model="localItem" :label-width="80" ref="table">
         <FormItem label="角色">
           <Select v-model="localItem.roles" multiple>
-            <Option
-              v-for="(item, index) in roles"
-              :value="item"
-              :key="'editTags-' + index"
-              >{{ item }}</Option
-            >
+            <Option v-for="(item, index) in roles" :value="item.role" :key="'roles-' + index">{{ item.name }}</Option>
           </Select>
         </FormItem>
         <FormItem label="是否禁用">
@@ -41,6 +31,10 @@ export default {
     isShow: {
       type: Boolean,
       default: false
+    },
+    roles: {
+      type: Array,
+      default: () => []
     }
   },
   watch: {
@@ -51,7 +45,7 @@ export default {
   data() {
     return {
       showStatus: false,
-      roles: ['super_admin', 'admin', 'user'],
+      // roles: ['super_admin', 'admin', 'user'],
       localItem: {
         status: '',
         isVip: '',
