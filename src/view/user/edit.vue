@@ -1,12 +1,26 @@
 <template>
   <div>
-    <Modal v-model="showStatus" title="编辑用户信息" @on-ok="ok" @on-cancel="cancel" :loading="loading">
-      <Form :model="localItem" :label-width="80" :rules="ruleValidate" ref="table">
+    <Modal
+      v-model="showStatus"
+      title="编辑用户信息"
+      @on-ok="ok"
+      @on-cancel="cancel"
+      :loading="loading"
+    >
+      <Form
+        :model="localItem"
+        :label-width="80"
+        :rules="ruleValidate"
+        ref="table"
+      >
         <FormItem label="用户昵称" prop="name">
           <Input v-model="localItem.name" placeholder="请输入用户昵称"></Input>
         </FormItem>
         <FormItem label="登录名" prop="username">
-          <Input v-model="localItem.username" placeholder="请输入登录名"></Input>
+          <Input
+            v-model="localItem.username"
+            placeholder="请输入登录名"
+          ></Input>
         </FormItem>
         <FormItem label="密码" prop="password">
           <Input v-model="localItem.password" placeholder="请输入密码"></Input>
@@ -14,7 +28,12 @@
         {{ localItem.roles }}
         <FormItem label="角色" prop="roles">
           <Select v-model="localItem.roles" multiple>
-            <Option v-for="(item, index) in roles" :value="item.role" :key="'roles-' + index">{{ item.name }}</Option>
+            <Option
+              v-for="(item, index) in roles"
+              :value="item.role"
+              :key="'roles-' + index"
+              >{{ item.name }}</Option
+            >
           </Select>
         </FormItem>
         <FormItem label="是否禁用">
@@ -89,6 +108,15 @@ const userNamePassCheck = (rule, value, callback, vm) => {
     }
   })
 }
+
+// 角色验证
+const rolesCheck = (rule, value, callback) => {
+  if (value.length === 0) {
+    callback(new Error('请选择用户角色！'))
+  } else {
+    callback()
+  }
+}
 export default {
   props: {
     isShow: {
@@ -151,7 +179,7 @@ export default {
             trigger: 'change'
           }
         ],
-        // roles: [{ required: true, message: '请选择用户角色', trigger: 'blur' }],
+        roles: [{ validator: rolesCheck, trigger: 'blur' }],
         username: [
           { required: true, message: '请输入登录名', trigger: 'blur' },
           { type: 'email', message: '请检查邮箱格式', trigger: 'blur' },

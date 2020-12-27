@@ -50,6 +50,11 @@ const updateRole = (data) => axios.post('/admin/update-role', data)
 
 // 删除角色权限
 const deleteRole = (data) => axios.post('/admin/delete-role', data)
+
+/*
+  下面是统计相关的接口
+*/
+const getStatData = () => axios.get('/admin/getstat')
 export {
   getUserList,
   updateUserById,
@@ -65,5 +70,6 @@ export {
   getRoles,
   getRoleNames,
   updateRole,
-  deleteRole
+  deleteRole,
+  getStatData
 }

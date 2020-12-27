@@ -1,8 +1,18 @@
 <template>
   <div>
-    <tables ref="tables" :columns="columns" v-model="localData" @on-selection-change="handleSelect">
+    <tables
+      ref="tables"
+      :columns="columns"
+      v-model="localData"
+      @on-selection-change="handleSelect"
+    >
       <template v-slot:table-header>
-        <Button @click="handleAdd" class="search-btn" type="primary" v-if="isEdit">
+        <Button
+          @click="handleAdd"
+          class="search-btn"
+          type="primary"
+          v-if="isEdit"
+        >
           <Icon type="md-person-add" />&nbsp;&nbsp;添加
         </Button>
       </template>

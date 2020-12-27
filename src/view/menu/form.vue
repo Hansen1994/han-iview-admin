@@ -1,8 +1,17 @@
 <template>
   <div>
-    <i-form :disabled="!isEdit" ref="form" :model="formData" :rules="formRules" :label-width="80">
+    <i-form
+      :disabled="!isEdit"
+      ref="form"
+      :model="formData"
+      :rules="formRules"
+      :label-width="80"
+    >
       <i-form-item label="菜单标题" prop="title">
-        <i-input v-model="formData.title" placeholder="请您输入菜单名称"></i-input>
+        <i-input
+          v-model="formData.title"
+          placeholder="请您输入菜单名称"
+        ></i-input>
       </i-form-item>
       <i-form-item label="路径" prop="path">
         <i-input v-model="formData.path" placeholder="请输入菜单路径"></i-input>
@@ -17,10 +26,16 @@
 
       <template v-if="formData.type !== 'link'">
         <i-form-item label="组件名称" prop="name">
-          <i-input v-model="formData.name" placeholder="请输入组件名称"></i-input>
+          <i-input
+            v-model="formData.name"
+            placeholder="请输入组件名称"
+          ></i-input>
         </i-form-item>
         <i-form-item label="组件">
-          <i-input v-model="formData.component" placeholder="请输入前端组件名称">
+          <i-input
+            v-model="formData.component"
+            placeholder="请输入前端组件名称"
+          >
             <span slot="prepend">()=>import('@/view</span>
             <span slot="append">.vue')</span>
           </i-input>
@@ -48,7 +63,10 @@
       </i-form-item>
 
       <i-form-item label="图标">
-        <i-input v-model="formData.icon" placeholder="请输入前端组件名称"></i-input>
+        <i-input
+          v-model="formData.icon"
+          placeholder="请输入前端组件名称"
+        ></i-input>
       </i-form-item>
       <i-form-item label="重定向">
         <i-input v-model="formData.redirect" placeholder="重定向组件"></i-input>

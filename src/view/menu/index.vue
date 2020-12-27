@@ -20,7 +20,12 @@
           :shadow="true"
           style="margin-bottom: 10px"
         >
-          <imooc-form :isEdit="isEdit" :formItem="formData" @submit="submit" @cancel="cancel"></imooc-form>
+          <imooc-form
+            :isEdit="isEdit"
+            :formItem="formData"
+            @submit="submit"
+            @cancel="cancel"
+          ></imooc-form>
         </i-card>
         <i-card :title="$t('resources')" :dis-hover="true" :shadow="true">
           <imooc-operations
@@ -434,7 +439,10 @@ export default {
         this.selectNode = val
         this.formData = this.selectNode[0]
 
-        if (this.selectNode[0].operations && this.selectNode[0].operations.length > 0) {
+        if (
+          this.selectNode[0].operations &&
+          this.selectNode[0].operations.length > 0
+        ) {
           // 防止修改原数据
           this.tableData = [...this.selectNode[0].operations]
         }
@@ -456,7 +464,9 @@ export default {
           const arr = this.selection.map((o) => o._id)
           deleteUserById(arr).then((res) => {
             // this.tableData.splice(index, 1)
-            this.tableData = this.tableData.filter((item) => !arr.includes(item._id))
+            this.tableData = this.tableData.filter(
+              (item) => !arr.includes(item._id)
+            )
             this.$Message.success('删除成功！')
             //  this._getList()
           })

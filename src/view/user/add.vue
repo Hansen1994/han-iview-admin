@@ -1,23 +1,54 @@
 <template>
   <div>
-    <Modal v-model="showStatus" title="添加用户信息" @on-ok="ok" @on-cancel="cancel" :loading="loading">
-      <Form :model="localItem" :label-width="80" :rules="ruleValidate" ref="table">
+    <Modal
+      v-model="showStatus"
+      title="添加用户信息"
+      @on-ok="ok"
+      @on-cancel="cancel"
+      :loading="loading"
+    >
+      <Form
+        :model="localItem"
+        :label-width="80"
+        :rules="ruleValidate"
+        ref="table"
+      >
         <FormItem label="登录名" prop="username">
-          <Input prefix="md-mail" v-model="localItem.username" placeholder="请输入登录名"></Input>
+          <Input
+            prefix="md-mail"
+            v-model="localItem.username"
+            placeholder="请输入登录名"
+          ></Input>
         </FormItem>
         <FormItem label="密码" prop="password">
-          <Input prefix="md-lock" v-model="localItem.password" placeholder="请输入密码"></Input>
+          <Input
+            prefix="md-lock"
+            v-model="localItem.password"
+            placeholder="请输入密码"
+          ></Input>
         </FormItem>
         <FormItem label="角色" prop="roles">
           <Select v-model="localItem.roles" multiple>
-            <Option v-for="(item, index) in roles" :value="item.role" :key="'roles-' + index">{{ item.name }}</Option>
+            <Option
+              v-for="(item, index) in roles"
+              :value="item.role"
+              :key="'roles-' + index"
+              >{{ item.name }}</Option
+            >
           </Select>
         </FormItem>
         <FormItem label="用户昵称" prop="name">
-          <Input prefix="md-person" v-model="localItem.name" placeholder="请输入用户昵称"></Input>
+          <Input
+            prefix="md-person"
+            v-model="localItem.name"
+            placeholder="请输入用户昵称"
+          ></Input>
         </FormItem>
         <FormItem label="手机" prop="mobile">
-          <Input v-model="localItem.mobile" placeholder="请输入用户手机号"></Input>
+          <Input
+            v-model="localItem.mobile"
+            placeholder="请输入用户手机号"
+          ></Input>
         </FormItem>
         <FormItem label="是否禁用">
           <RadioGroup v-model="localItem.status">
@@ -35,7 +66,11 @@
           <Input v-model="localItem.favs" style="width: 120px"></Input>
         </FormItem>
         <FormItem label="所在城市">
-          <Input prefix="md-pin" v-model="localItem.location" placeholder="请输入用户所在城市"></Input>
+          <Input
+            prefix="md-pin"
+            v-model="localItem.location"
+            placeholder="请输入用户所在城市"
+          ></Input>
         </FormItem>
         <FormItem label="性别">
           <RadioGroup v-model="localItem.sex">
@@ -44,7 +79,11 @@
           </RadioGroup>
         </FormItem>
         <FormItem label="个性签名">
-          <Input type="textarea" v-model="localItem.regmark" placeholder="请输入用户个性签名"></Input>
+          <Input
+            type="textarea"
+            v-model="localItem.regmark"
+            placeholder="请输入用户个性签名"
+          ></Input>
         </FormItem>
       </Form>
     </Modal>
@@ -76,6 +115,7 @@ const userNamePassCheck = (rule, value, callback) => {
   checkUsername(value).then((res) => {
     if (res.code === 200) {
       const data = res.data
+      console.log(data)
       if (data === 1) {
         // 校验通过继续
         callback()
@@ -93,6 +133,15 @@ const mobileCheck = (rule, value, callback) => {
     callback()
   } else {
     callback(new Error('请检查手机格式！'))
+  }
+}
+
+// 角色验证
+const rolesCheck = (rule, value, callback) => {
+  if (value.length === 0) {
+    callback(new Error('请选择用户角色！'))
+  } else {
+    callback()
   }
 }
 export default {
@@ -160,13 +209,7 @@ export default {
             trigger: 'change'
           }
         ],
-        // roles: [
-        //   {
-        //     required: true,
-        //     message: '请选择用户角色',
-        //     trigger: 'blur'
-        //   }
-        // ],
+        roles: [{ validator: rolesCheck, trigger: 'blur' }],
         username: [
           { required: true, message: '请输入登录名', trigger: 'blur' },
           { type: 'email', message: '请检查邮箱格式', trigger: 'blur' },

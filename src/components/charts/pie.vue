@@ -12,21 +12,22 @@ export default {
   props: {
     value: Array,
     text: String,
-    subtext: String
+    subtext: String,
+    tipname: String
   },
-  data () {
+  data() {
     return {
       dom: null
     }
   },
   methods: {
-    resize () {
+    resize() {
       this.dom.resize()
     }
   },
-  mounted () {
+  mounted() {
     this.$nextTick(() => {
-      let legend = this.value.map(_ => _.name)
+      let legend = this.value.map((_) => _.name)
       let option = {
         title: {
           text: this.text,
@@ -47,6 +48,8 @@ export default {
             type: 'pie',
             radius: '55%',
             center: ['50%', '60%'],
+            // 数据名，类目名
+            name: this.tipname,
             data: this.value,
             itemStyle: {
               emphasis: {
@@ -63,7 +66,7 @@ export default {
       on(window, 'resize', this.resize)
     })
   },
-  beforeDestroy () {
+  beforeDestroy() {
     off(window, 'resize', this.resize)
   }
 }

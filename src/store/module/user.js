@@ -83,6 +83,7 @@ export default {
         })
           .then((res) => {
             const data = res.data.data
+            console.log(res)
             console.log(res.data.token)
             commit('setToken', res.data.token)
             // commit('setAvatar', data.pic)

@@ -1,10 +1,20 @@
 <template>
   <div>
-    <Modal v-model="showStatus" title="批量设置" @on-ok="ok" @on-cancel="cancel">
+    <Modal
+      v-model="showStatus"
+      title="批量设置"
+      @on-ok="ok"
+      @on-cancel="cancel"
+    >
       <Form :model="localItem" :label-width="80" ref="table">
         <FormItem label="角色">
           <Select v-model="localItem.roles" multiple>
-            <Option v-for="(item, index) in roles" :value="item.role" :key="'roles-' + index">{{ item.name }}</Option>
+            <Option
+              v-for="(item, index) in roles"
+              :value="item.role"
+              :key="'roles-' + index"
+              >{{ item.name }}</Option
+            >
           </Select>
         </FormItem>
         <FormItem label="是否禁用">

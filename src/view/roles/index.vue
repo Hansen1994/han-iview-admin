@@ -4,7 +4,9 @@
       <i-col span="5" :sm="24" :md="24" :lg="5">
         <Card :dis-hover="true" :shadow="true">
           <p slot="title"><Icon type="md-contacts"></Icon>角色列表</p>
-          <a slot="extra" @click.prevent="addRoleModel()" v-if="!isEdit"> <Icon type="md-add"></Icon>新增 </a>
+          <a slot="extra" @click.prevent="addRoleModel()" v-if="!isEdit">
+            <Icon type="md-add"></Icon>新增
+          </a>
           <ul class="imooc-card">
             <li
               v-for="(item, index) in roles"
@@ -16,9 +18,23 @@
               <div class="flex1 round">{{ item.name }}</div>
               <span>
                 <!-- .stop阻止点击事件继续传播,防止触发selectRole造成未选中状态 -->
-                <Icon type="ios-create" size="16" @click.stop="editLabel(item, index)"></Icon>
-                <Icon type="md-build" size="16" color="#2d8cf0" @click.stop="editRole(item, index)"></Icon>
-                <Icon type="md-trash" size="16" color="#ed4014" @click.stop="_deleteRole(item, index)"></Icon>
+                <Icon
+                  type="ios-create"
+                  size="16"
+                  @click.stop="editLabel(item, index)"
+                ></Icon>
+                <Icon
+                  type="md-build"
+                  size="16"
+                  color="#2d8cf0"
+                  @click.stop="editRole(item, index)"
+                ></Icon>
+                <Icon
+                  type="md-trash"
+                  size="16"
+                  color="#ed4014"
+                  @click.stop="_deleteRole(item, index)"
+                ></Icon>
               </span>
             </li>
           </ul>
@@ -28,8 +44,16 @@
         <Card :dis-hover="true" :shadow="true" title="菜单权限" icon="md-menu">
           <div slot="extra">
             <ButtonGroup class="imooc-btn-group" v-if="isEdit">
-              <Button size="small" icon="ios-create" type="primary" @click="submit">确定</Button>
-              <Button size="small" icon="md-trash" @click="cancel()">取消</Button>
+              <Button
+                size="small"
+                icon="ios-create"
+                type="primary"
+                @click="submit"
+                >确定</Button
+              >
+              <Button size="small" icon="md-trash" @click="cancel()"
+                >取消</Button
+              >
             </ButtonGroup>
           </div>
           <Tree
@@ -42,7 +66,12 @@
         </Card>
       </i-col>
       <i-col span="13" :sm="24" :md="16" :lg="13">
-        <Card :title="$t('resources')" icon="md-exit" :dis-hover="true" :shadow="true">
+        <Card
+          :title="$t('resources')"
+          icon="md-exit"
+          :dis-hover="true"
+          :shadow="true"
+        >
           <OperationsTable
             :columns="columns"
             :tableData="tableData"
@@ -52,7 +81,13 @@
         </Card>
       </i-col>
     </i-row>
-    <Modal v-model="showAdd" title="添加角色" :loading="loading" @on-ok="modelSubmit()" @on-cancel="modelCancel()">
+    <Modal
+      v-model="showAdd"
+      title="添加角色"
+      :loading="loading"
+      @on-ok="modelSubmit()"
+      @on-cancel="modelCancel()"
+    >
       <Form :model="formItem" :label-width="80" :rules="formRules" ref="form">
         <FormItem label="角色名称" prop="name">
           <Input v-model="formItem.name" placeholder="请输入角色名称"></Input>
@@ -232,7 +267,12 @@ export default {
           return
         }
         // 修改右侧菜单树+权限列表的选中状态(他就是个显示，不能编辑的)
-        const tmpData = modifyNode(this.menuData, this.roles[this.roleIndex].menu, 'checked', true)
+        const tmpData = modifyNode(
+          this.menuData,
+          this.roles[this.roleIndex].menu,
+          'checked',
+          true
+        )
         // 通过缓存数据形式达到锁住功能(就是不能点选复选框)
         localStorage.setItem('menuData', JSON.stringify(tmpData))
         if (this.selectNode.length > 0 && this.selectNode[0].operations) {

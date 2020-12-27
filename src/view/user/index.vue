@@ -66,7 +66,14 @@
 
 <script>
 // 获取用户列表，通过id更新用户，更具id删除用户
-import { getUserList, getRoleNames, updateUserById, deleteUserById, addUser, updateUserBatchById } from '@/api/admin'
+import {
+  getUserList,
+  getRoleNames,
+  updateUserById,
+  deleteUserById,
+  addUser,
+  updateUserBatchById
+} from '@/api/admin'
 import Tables from '_c/tables'
 import EditModel from './edit'
 import AddModel from './add'
@@ -124,7 +131,9 @@ export default {
           // params就是后台传递来的数据
           render: (h, params) => {
             // return h('div', [h('span', params.row.roles.join(','))])
-            const roleNames = params.row.roles.map((o) => this.roleNames[o]).join(',')
+            const roleNames = params.row.roles
+              .map((o) => this.roleNames[o])
+              .join(',')
             return h('div', [h('span', roleNames)])
           },
           search: {
@@ -158,7 +167,9 @@ export default {
           align: 'center',
           minWidth: 100,
           render: (h, params) => {
-            return h('div', [h('span', params.row.status === '0' ? '否' : '是')])
+            return h('div', [
+              h('span', params.row.status === '0' ? '否' : '是')
+            ])
           },
           search: {
             type: 'radio',
@@ -210,7 +221,9 @@ export default {
           align: 'center',
           minWidth: 180,
           render: (h, params) => {
-            return h('div', [h('span', dayjs(params.row.created).format('YYYY-MM-DD hh:mm:ss'))])
+            return h('div', [
+              h('span', dayjs(params.row.created).format('YYYY-MM-DD hh:mm:ss'))
+            ])
           },
           search: {
             type: 'date'
@@ -370,7 +383,11 @@ export default {
     // 需要搜索的值
     handleSearch(value) {
       // 判断是否有新的查询内容的传递，把分页数据归0
-      if (typeof this.option.search !== 'undefined' && value.search !== this.option.search && this.option === {}) {
+      if (
+        typeof this.option.search !== 'undefined' &&
+        value.search !== this.option.search &&
+        this.option === {}
+      ) {
         // 从第1页开始，就是搜索选项发生跳转的时候
         this.page = 1
         // 搜索的选项和值
