@@ -8,7 +8,7 @@
       <Card icon="log-in" title="欢迎登录" :bordered="false">
         <div class="form-con">
           <login-form @on-success-valid="handleSubmit"></login-form>
-          <p class="login-tip">输入任意用户名和密码即可</p>
+          <p class="login-tip">欢迎来到前端芝麻社区</p>
         </div>
       </Card>
     </div>
@@ -28,11 +28,13 @@ export default {
     handleSubmit(options) {
       // 返回的是promise
       this.handleLogin(options).then((res) => {
-        if (res) {
+        if (res.code === 200) {
           // 跳转工作
           this.$router.push({
             name: this.$config.homeName
           })
+        } else {
+          this.$Message.error(res.msg)
         }
       })
     }

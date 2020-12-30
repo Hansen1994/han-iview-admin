@@ -55,5 +55,7 @@ export default {
   'Menu Options': '菜单选项',
   resources: '资源选项',
   'iview-admin': 'iview-admin文档',
-  'api-doc': '接口文档'
+  'api-doc': '接口文档',
+  system: '系统日志',
+  logs_check: '日志检查'
 }

@@ -82,16 +82,17 @@ export default {
           ...loginInfo
         })
           .then((res) => {
-            const data = res.data.data
-            console.log(res)
-            console.log(res.data.token)
-            commit('setToken', res.data.token)
-            // commit('setAvatar', data.pic)
-            commit('setUserName', data.name)
-            commit('setUserId', data._id)
-            commit('setAccess', data.roles)
-            commit('setHasGetInfo', true)
-            resolve(true)
+            // 防止没有数据(这里问题存在很久了，今天终于解决了)
+            if (res.data.code === 200) {
+              const data = res.data.data
+              commit('setToken', res.data.token)
+              commit('setAvatar', data.pic)
+              commit('setUserName', data.name)
+              commit('setUserId', data._id)
+              commit('setAccess', data.roles)
+              commit('setHasGetInfo', true)
+            }
+            resolve(res.data)
           })
           .catch((err) => {
             reject(err)

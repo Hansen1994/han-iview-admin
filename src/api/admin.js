@@ -13,7 +13,8 @@ const updateUserById = (data) => axios.post('/admin/update-user', data)
 // const deleteUserById = (id) => axios.get('/admin/delete-user?id=' + id)
 
 // 检查用户名字
-const checkUsername = (username) => axios.get('/admin/checkname?username=' + username)
+const checkUsername = (username) =>
+  axios.get('/admin/checkname?username=' + username)
 
 // 新增用户
 const addUser = (data) => axios.post('/admin/add-user', data)
@@ -22,7 +23,8 @@ const addUser = (data) => axios.post('/admin/add-user', data)
 const deleteUserById = (ids) => axios.post('/admin/delete-user', { ids })
 
 // 设置用户权限(角色，vip的设置)
-const updateUserBatchById = (data) => axios.post('/admin/update-user-settings', data)
+const updateUserBatchById = (data) =>
+  axios.post('/admin/update-user-settings', data)
 
 // 添加菜单
 const addMenu = (data) => axios.post('/admin/add-menu', data)
@@ -51,10 +53,16 @@ const updateRole = (data) => axios.post('/admin/update-role', data)
 // 删除角色权限
 const deleteRole = (data) => axios.post('/admin/delete-role', data)
 
-/*
-  下面是统计相关的接口
-*/
+// 统计数据接口
 const getStatData = () => axios.get('/admin/getstat')
+
+// 获取错误日志接口
+const getErrorLogsList = (params) =>
+  axios.get('/admin/get-error?' + qs.stringify(params))
+
+// 删除日志接口(批量删除)
+const deleteErrors = (ids) => axios.post('/admin/delete-error', { ids })
+
 export {
   getUserList,
   updateUserById,
@@ -71,5 +79,7 @@ export {
   getRoleNames,
   updateRole,
   deleteRole,
-  getStatData
+  getStatData,
+  getErrorLogsList,
+  deleteErrors
 }

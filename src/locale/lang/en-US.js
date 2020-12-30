@@ -55,5 +55,7 @@ export default {
   'Menu Options': 'Menu Options',
   resources: 'Resources',
   'iview-admin': 'iview-admin',
-  'api-doc': 'api-doc'
+  'api-doc': 'api-doc',
+  system: 'system log',
+  logs_check: 'logs check'
 }
