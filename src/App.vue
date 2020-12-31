@@ -8,7 +8,9 @@
 export default {
   name: 'App',
   data() {
-    return {}
+    return {
+      a: 1
+    }
   }
 }
 </script>
